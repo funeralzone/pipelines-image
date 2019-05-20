@@ -1,7 +1,5 @@
 FROM atlassian/default-image:2
 
-ENV NODE_VERSION=lts/dubnium
-
 # PHP 7.2
 RUN apt-key update && \
     apt-get -y update && \
@@ -43,14 +41,17 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     mv composer.phar /usr/local/bin/composer && \
     composer global require hirak/prestissimo --no-plugins --no-scripts
 
-# nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-ENV NVM_DIR=/root/.nvm
-RUN . $HOME/.nvm/nvm.sh && \
+ENV NVM_VERSION=0.34.0 \
+    NVM_DIR=/root/.nvm \
+    NODE_VERSION=lts/dubnium
+
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh | bash \
+    && . $NVM_DIR/nvm.sh && \
     nvm ls-remote --lts && \
     nvm install $NODE_VERSION && \
     nvm alias default $NODE_VERSION && \
-    nvm use default
+    nvm use default && \
+    echo "nvm use default" >> /root/.bashrc
 
 # Yarn
 RUN npm install -g yarn
@@ -59,4 +60,3 @@ RUN npm install -g yarn
 RUN wget https://github.com/sass/dart-sass/releases/download/1.5.0/dart-sass-1.5.0-linux-x64.tar.gz && \
     tar -xvzf dart-sass-1.5.0-linux-x64.tar.gz && \
     mv -v dart-sass/* /usr/local/bin
-
