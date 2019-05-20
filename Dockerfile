@@ -45,16 +45,15 @@ ENV NVM_VERSION=0.34.0 \
     NVM_DIR=/root/.nvm \
     NODE_VERSION=lts/dubnium
 
+# npm & yarn
 RUN curl https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh | bash \
     && . $NVM_DIR/nvm.sh && \
     nvm ls-remote --lts && \
     nvm install $NODE_VERSION && \
     nvm alias default $NODE_VERSION && \
     nvm use default && \
-    echo "nvm use default" >> /root/.bashrc
-
-# Yarn
-RUN npm install -g yarn
+    echo "nvm use default" >> /root/.bashrc && \
+    npm install -g yarn
 
 # SASS
 RUN wget https://github.com/sass/dart-sass/releases/download/1.5.0/dart-sass-1.5.0-linux-x64.tar.gz && \
