@@ -59,3 +59,19 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.
 RUN wget https://github.com/sass/dart-sass/releases/download/1.5.0/dart-sass-1.5.0-linux-x64.tar.gz && \
     tar -xvzf dart-sass-1.5.0-linux-x64.tar.gz && \
     mv -v dart-sass/* /usr/local/bin
+
+# GDCP (Google Drive API client)
+RUN apt-get install -qy python python-pip
+RUN pip install pydrive && pip install backoff
+RUN pip install --upgrade google-api-python-client
+RUN mkdir -p /usr/src/gdcp \
+    && cd /usr/src/ \
+    && git clone https://github.com/ctberthiaume/gdcp.git \
+    && cp gdcp/gdcp /usr/bin
+RUN mkdir $HOME/.gdcp
+RUN echo "client_config_file: "$HOME"/.gdcp/client_secrets.json" > $HOME/.gdcp/settings.yaml \
+    &&  echo "get_refresh_token: True" >> $HOME/.gdcp/settings.yaml \
+    &&  echo "save_credentials: True" >> $HOME/.gdcp/settings.yaml \
+    &&  echo "save_credentials_backend: file" >> $HOME/.gdcp/settings.yaml \
+    &&  echo "save_credentials_file: "$HOME"/.gdcp/credentials.json" >> $HOME/.gdcp/settings.yaml \
+    &&  echo "client_config_backend: file" >> $HOME/.gdcp/settings.yaml
